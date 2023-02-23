@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "DoD522022M.h"
 #define BUFFER_SIZE 1024 // Dimensione buffer utilizzata nella funzione di xor
 
 void xorFile(char *inputFile, char *keyFile, char *outputFile);
@@ -18,7 +19,7 @@ int main(int argc, char** argv) { //<fileName> <key>
 		exit(-3);
 	}
 	
-	if(strcmp("keygen",argv[1]) == 0){ // Funzione per la generazione di chiavi casuali
+	if(strcmp("keygen",argv[1]) == 0){ // Opzione per la generazione di chiavi casuali
 		if(argc<4){// keygen, outputFile, len
 			printf("Arguments Error!\nUse: %s keygen <keyFile> <keyLen>\n",argv[0]);
 			exit(-3);
@@ -27,7 +28,7 @@ int main(int argc, char** argv) { //<fileName> <key>
 			long len = strtol(argv[3], NULL, 10);
 			generateRandomKey(argv[2], len);
 		}
-	}else if(strcmp("strip",argv[1]) == 0){
+	}else if(strcmp("strip",argv[1]) == 0){ // Opzione per la rimozione di n byte dalla chiave
 		if(argc<4){// strip, keyFile, len
 			printf("Arguments Error!\nUse: %s strip <keyFile> <len>\n",argv[0]);
 			exit(-3);
@@ -35,6 +36,15 @@ int main(int argc, char** argv) { //<fileName> <key>
 			long len = strtol(argv[3], NULL, 10);
 			printf("[KEYSTRIP] Removed %u bytes from %s\n",len,argv[2]);
 			removeNbyte(argv[2], len);
+		}
+	}else if(strcmp("zeroize",argv[1]) == 0){ // Opzione per lo ZEROIZE della chiave
+		if(argc<3){// zeroize, keyFile
+			printf("Arguments Error!\nUse: %s zeroize <keyFile> \n",argv[0]);
+			exit(-3);
+		}else{
+			printf("[ZEROIZE] ZEROIZED AND DELETED %s\n",argv[2]);
+			wipe_file(argv[2]);
+			
 		}
 	}else{
 		if(strstr(argv[1], ".xorenc") != NULL){ //DECRYPT
@@ -76,6 +86,7 @@ void printHelp(char *fname){
 	printf("Use: %s <fileName> <keyFile> to encrypt / decrypt a file\n",fname);
 	printf("Use: %s keygen <fileName> <n> to generate a random key of n bytes\n",fname);
 	printf("Use: %s strip <keyFile> <n> to remove n bytes from keyFile\n",fname);
+	printf("Use: %s zeroize <keyFile> to ZEROIZE the key using DoD 5220.22-M\n",fname);
 	printf("\nWARNING! The randomly generated KEY is not cryptographically secure, always provide a truly random KEY when encrypting\n");
 	printf("\nWARNING! The key must always have the same length as the file to be encrypted!\n");
 }
@@ -84,7 +95,7 @@ void generateRandomKey(char *filename, long n) { // Attenzione! Funzione non cri
     // Apre il file in modalità write byte
     FILE *fp = fopen(filename, "wb");
     if (fp == NULL) {
-        printf("Error opening the file.\n");
+        printf("[ERROR - KEYGEN] Error opening the file.\n");
         return;
     }
     // Genera i dati random e li scrive nel file
