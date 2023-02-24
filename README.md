@@ -26,7 +26,7 @@ Applicativo con interfaccia a linea di comando che consente di criptare files at
 
 # Utilizzo corretto
 - La chiave deve essere **totalmente random** (ripetizioni di parti della chiave non ammesse!)
-- **LA CHIAVE NON DEVE MAI ESSERE RIUTILIZZATA** (Consigliato distruggere la porzione utilizzata)
+- **LA CHIAVE NON DEVE MAI ESSERE RIUTILIZZATA** (Il software automaticamente elimina la porzione utilizzata)
 - **ATTENZIONE!** Mantenere la chiave al sicuro, non su dispositivi connessi ad internet.
 - **ATTENZIONE!** l'opzione keygen utilizza la funzione rand() che non è sicura per applicazioni riguardanti la crittografica, si sconsiglia l'utilizzo di questa funzionalità se non per scopi di test.
 
